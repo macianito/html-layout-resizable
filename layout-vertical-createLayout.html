@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>layout</title>
+    <script type="text/javascript" src="js/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript" src="js/layout.js"></script>
+    <script type="text/javascript" src="js/utils.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+
+    <!-- http://stackoverflow.com/questions/8819328/how-to-adjust-the-size-of-multiple-adjacent-textareas-like-in-jsfiddle-net -->
+<div id="content-top">CONTENT TOP</div>
+<div id="content-bottom">CONTENT BOTTOM</div>
+
+<div id="layout-2"></div>
+
+<style>
+    body {
+    margin: 0;
+    padding: 27px;
+  }
+
+  #content-top,
+  #content-bottom {
+    padding: 27px 11px;
+  }
+
+  #layout-2 .top { /* establim mida top per defecte */
+    height: 100px;
+  }
+
+</style>
+
+
+
+
+<script>
+
+
+
+
+  new Layout('layout-2', {
+    type: 'vertical',
+	  contentsLayout: {
+	    top: jQuery('#content-top'),
+	    bottom: jQuery('#content-bottom')
+	  }
+  });
+
+</script>
+
+
+
+  </body>
+</html>
