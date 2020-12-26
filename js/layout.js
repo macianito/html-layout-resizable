@@ -81,7 +81,7 @@ this.Layout = (function($) {
     var self = this;
 
     jQuery(window).resize(function() { // Necesari pel resize
-      self.setDimensionValues();
+      _setDimensionValues.call(self);
     });
 
     this.wrapper.css('visibility', 'visible');
