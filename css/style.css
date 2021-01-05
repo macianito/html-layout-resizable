@@ -27,12 +27,12 @@
 
   .handler-horizontal {
     position: absolute;
-    border: 2px outset #aaa;
-    width: 11px;
+    /* border: 1px outset #aaa; */
+    width: 8px;
     height: 100%;
     /* left: 48%; */
     cursor: col-resize;
-    background: #eee;
+    background: #cabcbc;
   }
 
   .wrapper-layout .right {

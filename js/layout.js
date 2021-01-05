@@ -28,6 +28,8 @@ this.Layout = (function($) {
 
     this.type = type,
     this.horizontal = (type == 'horizontal');
+	
+	_storeWindowDimensions.call(this);
 
 
     /*
@@ -81,7 +83,14 @@ this.Layout = (function($) {
     var self = this;
 
     jQuery(window).resize(function() { // Necesari pel resize
-      _setDimensionValues.call(self);
+	  if(this.windowWidth != jQuery(window).width()) { // only when resizing window with
+        
+		_setDimensionValues.call(self);
+		
+      }
+	  
+	  _storeWindowDimensions.call(this);
+	  
     });
 
     this.wrapper.css('visibility', 'visible');
@@ -90,7 +99,20 @@ this.Layout = (function($) {
 
   return Layout;
 
+   
+  /**
+   * Set dimensions and positions of the elements
+   *
+   * @private
+   *
+   */
 
+  function _storeWindowDimensions() {
+	
+    this.windowWidth = jQuery(window).width();
+	this.windowHeight = jQuery(window).height();	
+	
+  };
 
   /**
    * Set dimensions and positions of the elements
@@ -108,7 +130,7 @@ this.Layout = (function($) {
       _setNewValuesHorizontal.call(this,
         Utils.getPercentage(Utils.getBoxElement(this.layoutLeft[0]).width, this.wrapperBox.width),
         Utils.getPercentage(Utils.getBoxElement(this.layoutRight[0]).width, this.wrapperBox.width),
-        Utils.getPositionRelativeToParent(this.layoutRight[0]).x // Es pel border el -1
+        Utils.getPositionRelativeToParent(this.layoutRight[0]).x
       );
 
     } else {
@@ -116,7 +138,7 @@ this.Layout = (function($) {
       _setNewValuesVertical.call(this,
         Utils.getPercentage(Utils.getBoxElement(this.layoutTop[0]).height, this.wrapperBox.height),
         Utils.getPercentage(Utils.getBoxElement(this.layoutBottom[0]).height, this.wrapperBox.height),
-        Utils.getPositionRelativeToParent(this.layoutBottom[0]).y // Es pel border el -1
+        Utils.getPositionRelativeToParent(this.layoutBottom[0]).y
       );
 
     }
