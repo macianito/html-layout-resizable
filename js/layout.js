@@ -82,17 +82,6 @@ this.Layout = (function($) {
 
     var self = this;
 
-    jQuery(window).resize(function() { // Necesari pel resize
-	  if(this.windowWidth != jQuery(window).width()) { // only when resizing window with
-        
-		_setDimensionValues.call(self);
-		
-      }
-	  
-	  _storeWindowDimensions.call(this);
-	  
-    });
-
     this.wrapper.css('visibility', 'visible');
 
   }
@@ -109,8 +98,8 @@ this.Layout = (function($) {
 
   function _storeWindowDimensions() {
 	
-    this.windowWidth = jQuery(window).width();
-	this.windowHeight = jQuery(window).height();	
+    this.wrapperWidth  = this.wrapper.width();
+	this.wrapperHeight = this.wrapper.height();	
 	
   };
 
@@ -124,21 +113,19 @@ this.Layout = (function($) {
   function _setDimensionValues() {
 
     this.wrapperBox = Utils.getBoxElement(this.wrapper[0]);
+	
+	console.log(Utils.getBoxElement(this.layoutLeft[0]).width)
 
     if(this.horizontal) {
 
       _setNewValuesHorizontal.call(this,
-        Utils.getPercentage(Utils.getBoxElement(this.layoutLeft[0]).width, this.wrapperBox.width),
-        Utils.getPercentage(Utils.getBoxElement(this.layoutRight[0]).width, this.wrapperBox.width),
-        Utils.getPositionRelativeToParent(this.layoutRight[0]).x
+        Utils.getPercentage(Utils.getBoxElement(this.layoutLeft[0]).width, this.wrapperBox.width)
       );
 
     } else {
 
       _setNewValuesVertical.call(this,
-        Utils.getPercentage(Utils.getBoxElement(this.layoutTop[0]).height, this.wrapperBox.height),
-        Utils.getPercentage(Utils.getBoxElement(this.layoutBottom[0]).height, this.wrapperBox.height),
-        Utils.getPositionRelativeToParent(this.layoutBottom[0]).y
+        Utils.getPercentage(Utils.getBoxElement(this.layoutTop[0]).height, this.wrapperBox.height)
       );
 
     }
@@ -161,7 +148,7 @@ this.Layout = (function($) {
       evt.preventDefault();
 
       self.positionMouseDown = Utils.getAbsoluteMousePosition(evt);
-      self.handlerRelativePosition = Utils.getPositionRelativeToParent(self.handlerLayout[0]).x + 8;
+      self.handlerRelativePosition = Utils.getPositionRelativeToParent(self.handlerLayout[0]).x;
 
     }),
 
@@ -169,24 +156,19 @@ this.Layout = (function($) {
 
       if(self.positionMouseDown == null) return;
 
-        var positionMouseMove = Utils.getAbsoluteMousePosition(evt),
-            horizontalMovement = positionMouseMove.x - self.positionMouseDown.x,
-            posHandler = self.handlerRelativePosition + horizontalMovement;
+      var positionMouseMove = Utils.getAbsoluteMousePosition(evt),
+          horizontalMovement = positionMouseMove.x - self.positionMouseDown.x,
+          posHandler = self.handlerRelativePosition + horizontalMovement;
 
-        if(posHandler < self.padding) {
-          posHandler = self.padding;
-        } else if(posHandler > self.wrapperBox.width - self.padding) {
-          posHandler = self.wrapperBox.width - self.padding;
-        }
+      if(posHandler < self.padding) {
+        posHandler = self.padding;
+      } else if(posHandler > self.wrapperBox.width - self.padding) {
+        posHandler = self.wrapperBox.width - self.padding;
+      }
 
-        var percent = Utils.getPercentage(posHandler, self.wrapperBox.width);
+      var percent = Utils.getPercentage(posHandler, self.wrapperBox.width);
 
-        var leftPercent = percent,
-            rightPercent = 100 - leftPercent;
-
-        //console.log(leftPercent, rightPercent)
-
-        _setNewValuesHorizontal.call(self, leftPercent, rightPercent, posHandler);
+      _setNewValuesHorizontal.call(self, percent);
 
 
     }).on('mouseup mouseleave', function(evt) {
@@ -213,7 +195,7 @@ this.Layout = (function($) {
       evt.preventDefault();
 
       self.positionMouseDown = Utils.getAbsoluteMousePosition(evt);
-      self.handlerRelativePosition = Utils.getPositionRelativeToParent(self.handlerLayout[0]).y + 8;
+      self.handlerRelativePosition = Utils.getPositionRelativeToParent(self.handlerLayout[0]).y;
 
     }),
 
@@ -221,24 +203,22 @@ this.Layout = (function($) {
 
       if(self.positionMouseDown == null) return;
 
-        var positionMouseMove = Utils.getAbsoluteMousePosition(evt),
-            verticalMovement = positionMouseMove.y - self.positionMouseDown.y,
-            posHandler = self.handlerRelativePosition + verticalMovement;
+      var positionMouseMove = Utils.getAbsoluteMousePosition(evt),
+          verticalMovement = positionMouseMove.y - self.positionMouseDown.y,
+          posHandler = self.handlerRelativePosition + verticalMovement;
 
-        if(posHandler < self.padding) {
-          posHandler = self.padding;
-        } else if(posHandler > self.wrapperBox.height - self.padding) {
-          posHandler = self.wrapperBox.height - self.padding;
-        }
+      if(posHandler < self.padding) {
+        posHandler = self.padding;
+      } else if(posHandler > self.wrapperBox.height - self.padding) {
+        posHandler = self.wrapperBox.height - self.padding;
+      }
 
-        var percent = Utils.getPercentage(posHandler, self.wrapperBox.height);
+      var percent = Utils.getPercentage(posHandler, self.wrapperBox.height);
 
-        var topPercent = percent,
-            bottomPercent = 100 - topPercent;
 
-        //console.log(leftPercent, rightPercent)
+      //console.log(leftPercent, rightPercent)
 
-        _setNewValuesVertical.call(self,topPercent, bottomPercent, posHandler);
+      _setNewValuesVertical.call(self,percent);
 
     }).on('mouseup mouseleave', function(evt) {
 
@@ -260,10 +240,11 @@ this.Layout = (function($) {
    *
    */
 
-  function _setNewValuesHorizontal(left, right, handlerLeft) {
+  function _setNewValuesHorizontal(left) {
     this.layoutLeft.css('width', left + '%'),
-    this.layoutRight.css('width', right + '%');
-    handlerLeft && this.handlerLayout.css('left', (handlerLeft - 8) + 'px');
+    this.layoutRight.css('width', (100 - left) + '%');
+    // handlerLeft && this.handlerLayout.css('left', handlerLeft + '%');
+    this.handlerLayout.css('left', left + '%'); 
   };
 
   /**
@@ -277,10 +258,11 @@ this.Layout = (function($) {
    *
    */
 
-  function _setNewValuesVertical(top, bottom, handlerTop) {
+  function _setNewValuesVertical(top) {
     this.layoutTop.css('height', top + '%'),
-    this.layoutBottom.css('height', bottom + '%');
-    handlerTop && this.handlerLayout.css('top', (handlerTop - 8) + 'px');
+    this.layoutBottom.css('height', 100 - top + '%');
+    //handlerTop && this.handlerLayout.css('top', (handlerTop - 8) + 'px');
+	this.handlerLayout.css('top', top + '%');
   };
 
 
