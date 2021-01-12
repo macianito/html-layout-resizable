@@ -114,7 +114,6 @@ this.Layout = (function($) {
 
     this.wrapperBox = Utils.getBoxElement(this.wrapper[0]);
 	
-	console.log(Utils.getBoxElement(this.layoutLeft[0]).width)
 
     if(this.horizontal) {
 
