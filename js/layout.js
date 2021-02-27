@@ -30,6 +30,8 @@ this.Layout = (function($) {
     this.horizontal = (type == 'horizontal');
 	
 	_storeWindowDimensions.call(this);
+	
+	var self = this;
 
 
     /*
@@ -79,8 +81,6 @@ this.Layout = (function($) {
     }
 
     _setDimensionValues.call(this);
-
-    var self = this;
 
     this.wrapper.css('visibility', 'visible');
 
@@ -145,11 +145,13 @@ this.Layout = (function($) {
     jQuery('#' + id + ' .handler-horizontal').on('mousedown', function(evt) {
 
       evt.preventDefault();
+	  
+	  self.wrapperBox = Utils.getBoxElement(self.wrapper[0]);
 
       self.positionMouseDown = Utils.getAbsoluteMousePosition(evt);
       self.handlerRelativePosition = Utils.getPositionRelativeToParent(self.handlerLayout[0]).x;
 
-    }),
+    });
 
     jQuery(document).on('mousemove', function(evt) {
 
@@ -161,7 +163,7 @@ this.Layout = (function($) {
 
       if(posHandler < self.padding) {
         posHandler = self.padding;
-      } else if(posHandler > self.wrapperBox.width - self.padding) {
+      } else if(posHandler >= self.wrapperBox.width - self.padding) {
         posHandler = self.wrapperBox.width - self.padding;
       }
 
@@ -175,6 +177,7 @@ this.Layout = (function($) {
       self.positionMouseDown = null;
 
     });
+
 
   };
 
@@ -192,6 +195,8 @@ this.Layout = (function($) {
     jQuery('#' + id + ' .handler-vertical').on('mousedown', function(evt) {
 
       evt.preventDefault();
+	  
+	  self.wrapperBox = Utils.getBoxElement(self.wrapper[0]);
 
       self.positionMouseDown = Utils.getAbsoluteMousePosition(evt);
       self.handlerRelativePosition = Utils.getPositionRelativeToParent(self.handlerLayout[0]).y;
@@ -259,7 +264,7 @@ this.Layout = (function($) {
 
   function _setNewValuesVertical(top) {
     this.layoutTop.css('height', top + '%'),
-    this.layoutBottom.css('height', 100 - top + '%');
+    this.layoutBottom.css('height', (100 - top) + '%');
     //handlerTop && this.handlerLayout.css('top', (handlerTop - 8) + 'px');
 	this.handlerLayout.css('top', top + '%');
   };
