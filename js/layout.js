@@ -28,10 +28,12 @@ this.Layout = (function($) {
 
     this.type = type,
     this.horizontal = (type == 'horizontal');
-	
-	_storeWindowDimensions.call(this);
-	
-	var self = this;
+
+
+    _storeWindowDimensions.call(this);
+
+
+    var self = this;
 
 
     /*
@@ -45,7 +47,7 @@ this.Layout = (function($) {
       this.wrapper.addClass('wrapper-layout');
 
       if(this.horizontal)
-        this.wrapper.html('<div class="left"></div><div class="handler-horizontal"> </div><div class="right"></div>');
+        this.wrapper.html('<div class="left"></div><div class="handler-horizontal"></div><div class="right"></div>');
       else
         this.wrapper.html('<div class="top"></div><div class="handler-vertical"></div><div class="bottom"></div>');
 
@@ -84,11 +86,16 @@ this.Layout = (function($) {
 
     this.wrapper.css('visibility', 'visible');
 
+    // react when window resize
+    jQuery(window).resize(function() {
+       _setDimensionValues.call(self);
+    });
+
   }
 
   return Layout;
 
-   
+
   /**
    * Set dimensions and positions of the elements
    *
@@ -97,10 +104,10 @@ this.Layout = (function($) {
    */
 
   function _storeWindowDimensions() {
-	
+
     this.wrapperWidth  = this.wrapper.width();
-	this.wrapperHeight = this.wrapper.height();	
-	
+    this.wrapperHeight = this.wrapper.height();
+
   };
 
   /**
@@ -112,24 +119,40 @@ this.Layout = (function($) {
 
   function _setDimensionValues() {
 
-    this.wrapperBox = Utils.getBoxElement(this.wrapper[0]);
-	
+    this.wrapperBox = _getBoxElement(this.wrapper[0]);
+
 
     if(this.horizontal) {
 
       _setNewValuesHorizontal.call(this,
-        Utils.getPercentage(Utils.getBoxElement(this.layoutLeft[0]).width, this.wrapperBox.width)
+        Utils.getPercentage(_getBoxElement(this.layoutLeft[0]).width, this.wrapperBox.width)
       );
 
     } else {
 
       _setNewValuesVertical.call(this,
-        Utils.getPercentage(Utils.getBoxElement(this.layoutTop[0]).height, this.wrapperBox.height)
+        Utils.getPercentage(_getBoxElement(this.layoutTop[0]).height, this.wrapperBox.height)
       );
 
     }
 
   };
+
+  /**
+   * Get Box element
+   *
+   * @private
+   *
+   */
+
+  function _getBoxElement(element) {
+
+    var boxElement = Utils.getBoxElement(element);
+
+    return boxElement;
+
+  };
+
 
   /**
    * Setup events of the horizontal Layout
@@ -145,8 +168,8 @@ this.Layout = (function($) {
     jQuery('#' + id + ' .handler-horizontal').on('mousedown', function(evt) {
 
       evt.preventDefault();
-	  
-	  self.wrapperBox = Utils.getBoxElement(self.wrapper[0]);
+
+      self.wrapperBox = _getBoxElement(self.wrapper[0]);
 
       self.positionMouseDown = Utils.getAbsoluteMousePosition(evt);
       self.handlerRelativePosition = Utils.getPositionRelativeToParent(self.handlerLayout[0]).x;
@@ -195,8 +218,8 @@ this.Layout = (function($) {
     jQuery('#' + id + ' .handler-vertical').on('mousedown', function(evt) {
 
       evt.preventDefault();
-	  
-	  self.wrapperBox = Utils.getBoxElement(self.wrapper[0]);
+
+      self.wrapperBox = _getBoxElement(self.wrapper[0]);
 
       self.positionMouseDown = Utils.getAbsoluteMousePosition(evt);
       self.handlerRelativePosition = Utils.getPositionRelativeToParent(self.handlerLayout[0]).y;
@@ -247,8 +270,10 @@ this.Layout = (function($) {
   function _setNewValuesHorizontal(left) {
     this.layoutLeft.css('width', left + '%'),
     this.layoutRight.css('width', (100 - left) + '%');
-    // handlerLeft && this.handlerLayout.css('left', handlerLeft + '%');
-    this.handlerLayout.css('left', left + '%'); 
+
+    //this.handlerLayout.css('left', left + '%');
+    this.handlerLayout.css('left', (this.layoutLeft.width() + parseInt(this.wrapper.css('padding-left').replace('px', ''))) + 'px');
+
   };
 
   /**
@@ -265,8 +290,9 @@ this.Layout = (function($) {
   function _setNewValuesVertical(top) {
     this.layoutTop.css('height', top + '%'),
     this.layoutBottom.css('height', (100 - top) + '%');
-    //handlerTop && this.handlerLayout.css('top', (handlerTop - 8) + 'px');
-	this.handlerLayout.css('top', top + '%');
+    //this.handlerLayout.css('top', top + '%');
+    this.handlerLayout.css('top', (this.layoutTop.height() + parseInt(this.wrapper.css('padding-top').replace('px', ''))) + 'px');
+
   };
 
 
